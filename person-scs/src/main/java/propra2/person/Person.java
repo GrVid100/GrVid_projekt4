@@ -16,8 +16,9 @@ public class Person {
     private Long id;
     private String vorname;
     private String nachname;
+    private String jahreslohn;
     private String rolle;
     private String kontakt;
-    private Array<String> skills;
-    private Array<Long> projekte;
+    private String[] skills;
+    private Long[] projekte;
 }

@@ -1,5 +1,6 @@
 package propra2.person;
 
+import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
@@ -12,18 +13,16 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import javax.servlet.http.HttpServletRequest;
+import java.lang.reflect.Array;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
-
+@Data
 @Controller
 public class PersonController {
 
-//	@GetMapping("**") // Match all GET Requests
-//	public @ResponseBody String whatever() {
-//		return "Hallo, ich bin das Person-SCS";
-//	}
+
 	@Autowired
 	PersonRepository personRepository;
 
@@ -41,15 +40,17 @@ public class PersonController {
     }
 
     @RequestMapping("/add")
-    public String addToDatabase(@RequestParam("name") String name,
+    public String addToDatabase(@RequestParam("vorname") String vorname,
+                                @RequestParam("nachvorname") String nachname,
                                 @RequestParam("jahreslohn") String jahreslohn,
                                 @RequestParam("kontaktdaten") String kontaktdaten,
-                                @RequestParam("skills") String skills,
+                                @RequestParam("skills") String[] skills,
                                 Model model) {
         Person newPerson = new Person();
-        newPerson.setName(name);
-        newPerson.setJahresLohn(jahreslohn);
-        newPerson.setKontaktDaten(kontaktdaten);
+        newPerson.setVorname(vorname);
+        newPerson.setVorname(nachname);
+        newPerson.setJahreslohn(jahreslohn);
+        newPerson.setKontakt(kontaktdaten);
         newPerson.setSkills(skills);
         personRepository.save(newPerson);
 
@@ -77,16 +78,18 @@ public class PersonController {
     }
 
 	@RequestMapping("/saveChanges/{id}")
-    public String saveChanges(@RequestParam("name") String name,
+    public String saveChanges(@RequestParam("vorname") String vorname,
+                              @RequestParam("nachname") String nachname,
                               @RequestParam("jahreslohn") String jahreslohn,
-                              @RequestParam("kontaktdaten") String kontaktdaten,
-                              @RequestParam("skills") String skills,
+                              @RequestParam("kontakt") String kontakt,
+                              @RequestParam("skills") String[] skills,
                               @PathVariable Long id,
                               Model model) {
         Optional<Person> person = personRepository.findById(id);
-        person.get().setName(name);
-        person.get().setJahresLohn(jahreslohn);
-        person.get().setKontaktDaten(kontaktdaten);
+        person.get().setVorname(vorname);
+        person.get().setVorname(nachname);
+        person.get().setJahreslohn(jahreslohn);
+        person.get().setKontakt(kontakt);
         person.get().setSkills(skills);
 
         personRepository.save(person.get());
