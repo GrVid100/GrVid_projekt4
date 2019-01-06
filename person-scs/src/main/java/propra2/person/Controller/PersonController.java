@@ -1,30 +1,31 @@
-package propra2.person;
+package propra2.person.Controller;
 
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
+import propra2.person.Model.Event;
+import propra2.person.Model.Person;
+import propra2.person.Model.Projekt;
+import propra2.person.PersonNichtVorhanden;
+import propra2.person.Repository.PersonRepository;
 import reactor.core.publisher.Mono;
 
-import javax.servlet.http.HttpServletRequest;
-import java.lang.reflect.Array;
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Queue;
+
 @Data
 @Controller
 public class PersonController {
 
 
 	@Autowired
-	PersonRepository personRepository;
+    PersonRepository personRepository;
 
 	@GetMapping("/")
 	public String mainpage(Model model) {
@@ -53,7 +54,10 @@ public class PersonController {
         newPerson.setKontakt(kontaktdaten);
         newPerson.setSkills(skills);
         personRepository.save(newPerson);
-
+        Event newEvent = new Event();
+        newEvent.setEvent("create");
+        newEvent.setPersonId(newPerson.getId());
+        newEvent.setPerson(newPerson);
         model.addAttribute("person", newPerson);
 
 	    return "confirmationAdd";

@@ -11,9 +11,9 @@
     <a href="/projekt">Start Seite</a>
 </p>
 <br>
-<h3 th:text="${projekt.getName()}"><b>Name</b></h3>
+<h3 th:text="${projekt.getTitel()}"><b>Name</b></h3>
 <ul class="list-group">
-    <li class="list-group-item" th:text="'Beschreibung: ' + ${projekt.getDescription()}" >Beschreibung</li>
+    <li class="list-group-item" th:text="'Beschreibung: ' + ${projekt.getBeschreibung()}" >Beschreibung</li>
     <li class="list-group-item" th:text="'Startdatum: ' + ${projekt.getStartdatum()}" >Startdatum</li>
     <li class="list-group-item" th:text="'Laufzeit: ' + ${projekt.getLaufzeit()}">Laufzeit</li>
     <li class="list-group-item">Team:

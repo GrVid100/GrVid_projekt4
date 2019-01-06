@@ -38,14 +38,12 @@ public class ProjektController {
     @RequestMapping("/add")
     public String addToDatabase(@RequestParam("name") String name,
                                 @RequestParam("description") String description,
-                                @RequestParam("budget") String budget,
                                 @RequestParam("startdatum") String startdatum,
                                 @RequestParam("laufzeit") String laufzeit,
                                 Model model) {
         Projekt newProjekt = new Projekt();
-        newProjekt.setName(name);
-        newProjekt.setDescription(description);
-        newProjekt.setBudget(budget);
+        newProjekt.setTitel(name);
+        newProjekt.setBeschreibung(description);
         newProjekt.setStartdatum(startdatum);
         newProjekt.setLaufzeit(laufzeit);
         projektRepository.save(newProjekt);
@@ -69,15 +67,14 @@ public class ProjektController {
 	@RequestMapping("/saveChanges/{id}")
     public String saveChanges(@RequestParam("name") String name,
                               @RequestParam("description") String description,
-                              @RequestParam("budget") String budget,
                               @RequestParam("startdatum") String startdatum,
                               @RequestParam("laufzeit") String laufzeit,
                               @PathVariable Long id,
                               Model model) {
         Optional<Projekt> projekt = projektRepository.findById(id);
-        projekt.get().setName(name);
-        projekt.get().setDescription(description);
-        projekt.get().setBudget(budget);
+
+        projekt.get().setTitel(name);
+        projekt.get().setBeschreibung(description);
         projekt.get().setStartdatum(startdatum);
         projekt.get().setLaufzeit(laufzeit);
 

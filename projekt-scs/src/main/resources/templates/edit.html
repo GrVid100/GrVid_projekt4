@@ -9,7 +9,6 @@
 <form th:action="@{'/projekt/saveChanges/' + ${projekt.get().id}}" method="get">
     Name:         <input type="text" name="name" th:value="${projekt.get().name}"><br>
     Beschreibung: <input type="text" name="description" th:value="${projekt.get().description}"><br>
-    Budget:   <input type="number" name="budget" th:value="${projekt.get().budget}"><br>
     Startdatum: <input type="text" name="startdatum" th:value="${projekt.get().startdatum}"><br>
     Laufzeit:       <input type="text" name="laufzeit" th:value="${projekt.get().laufzeit}"><br>
 

@@ -1,4 +1,4 @@
-package propra2.person;
+package propra2.person.Model;
 
 import lombok.Data;
 
