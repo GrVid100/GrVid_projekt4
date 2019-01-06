@@ -1,11 +1,10 @@
-package propra2.person;
+package propra2.person.model;
 
 import lombok.Data;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import java.util.List;
 
 @Data
 @Entity

@@ -1,19 +1,18 @@
-package propra2.person;
+package propra2.person.controller;
 
+import org.hibernate.annotations.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
+import propra2.person.PersonNichtVorhanden;
+import propra2.person.repository.PersonRepository;
+import propra2.person.Projekt;
+import propra2.person.model.Person;
 import reactor.core.publisher.Mono;
 
-import javax.servlet.http.HttpServletRequest;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,8 +24,7 @@ public class PersonController {
 //		return "Hallo, ich bin das Person-SCS";
 //	}
 	@Autowired
-	PersonRepository personRepository;
-
+    PersonRepository personRepository;
 	@GetMapping("/")
 	public String mainpage(Model model) {
 		List<Person> persons = personRepository.findAll();
@@ -69,41 +67,41 @@ public class PersonController {
         return "edit";
 	}
 
-    @GetMapping("/projekte")
-    public String index(Model model) {
-        final Projekt[] projekte = getEntity("projekt", Projekt[].class);
-        model.addAttribute("projekte", projekte);
-        return "projektee";
-    }
-
-	@RequestMapping("/saveChanges/{id}")
-    public String saveChanges(@RequestParam("name") String name,
-                              @RequestParam("jahreslohn") String jahreslohn,
-                              @RequestParam("kontaktdaten") String kontaktdaten,
-                              @RequestParam("skills") String skills,
-                              @PathVariable Long id,
-                              Model model) {
-        Optional<Person> person = personRepository.findById(id);
-        person.get().setName(name);
-        person.get().setJahresLohn(jahreslohn);
-        person.get().setKontaktDaten(kontaktdaten);
-        person.get().setSkills(skills);
-
-        personRepository.save(person.get());
-        model.addAttribute("person", person);
-
-        return "confirmationEdit";
-	}
-
-    private static <T> T getEntity(final String entity, final Class<T> type) {
-        final Mono<T> mono = WebClient
-                .create()
-                .get()
-                .uri("http://projekt:8080/projekte-rest/all")
-                .accept(MediaType.APPLICATION_JSON_UTF8)
-                .retrieve()
-                .bodyToMono(type);
-
-        return mono.block();
-    }
+//    @GetMapping("/projekte")
+//    public String index(Model model) {
+//        final Projekt[] projekte = getEntity("projekt", Projekt[].class);
+//        model.addAttribute("projekte", projekte);
+//        return "projektee";
+//    }
+//
+//	@RequestMapping("/saveChanges/{id}")
+//    public String saveChanges(@RequestParam("name") String name,
+//                              @RequestParam("jahreslohn") String jahreslohn,
+//                              @RequestParam("kontaktdaten") String kontaktdaten,
+//                              @RequestParam("skills") String skills,
+//                              @PathVariable Long id,
+//                              Model model) {
+//        Optional<Person> person = personRepository.findById(id);
+//        person.get().setName(name);
+//        person.get().setJahresLohn(jahreslohn);
+//        person.get().setKontaktDaten(kontaktdaten);
+//        person.get().setSkills(skills);
+//
+//        personRepository.save(person.get());
+//        model.addAttribute("person", person);
+//
+//        return "confirmationEdit";
+//	}
+//
+//    private static <T> T getEntity(final String entity, final Class<T> type) {
+//        final Mono<T> mono = WebClient
+//                .create()
+//                .get()
+//                .uri("http://projekt:8080/projekte-rest/all")
+//                .accept(MediaType.APPLICATION_JSON_UTF8)
+//                .retrieve()
+//                .bodyToMono(type);
+//
+//        return mono.block();
+//    }
 }
