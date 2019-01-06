@@ -14,6 +14,7 @@ public class Projekt {
     private Long id;
     private String titel;
     private String beschreibung;
+    private int budget;
     private String startdatum;
     private String laufzeit;
     private Long[] team;

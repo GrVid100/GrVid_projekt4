@@ -5,6 +5,7 @@ import lombok.Data;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 import java.lang.reflect.Array;
 import java.util.List;
 
@@ -20,5 +21,5 @@ public class Person {
     private String rolle;
     private String kontakt;
     private String[] skills;
-    private Long[] projekte;
+    private Long[] projekteId;
 }

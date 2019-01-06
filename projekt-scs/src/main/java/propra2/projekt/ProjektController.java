@@ -36,8 +36,8 @@ public class ProjektController {
     }
 
     @RequestMapping("/add")
-    public String addToDatabase(@RequestParam("name") String name,
-                                @RequestParam("description") String description,
+    public String addToDatabase(@RequestParam("titel") String name,
+                                @RequestParam("beschreibung") String description,
                                 @RequestParam("startdatum") String startdatum,
                                 @RequestParam("laufzeit") String laufzeit,
                                 Model model) {
@@ -65,8 +65,8 @@ public class ProjektController {
 	}
 
 	@RequestMapping("/saveChanges/{id}")
-    public String saveChanges(@RequestParam("name") String name,
-                              @RequestParam("description") String description,
+    public String saveChanges(@RequestParam("titel") String name,
+                              @RequestParam("beschreibung") String description,
                               @RequestParam("startdatum") String startdatum,
                               @RequestParam("laufzeit") String laufzeit,
                               @PathVariable Long id,

@@ -20,12 +20,6 @@
             <li class="list-group-item" th:text="${projekt.getBeschreibung()}">Beschrebigun</li>
             <li class="list-group-item" th:text="'Startdatum: ' + ${projekt.getStartdatum()}">Startdatum</li>
             <li class="list-group-item" th:text="'Laufzeit: ' + ${projekt.getLaufzeit()}">Laufzeit</li>
-            <li class="list-group-item"><b>Team: </b>
-                <ul >
-                    <li>Person1...</li>
-                    <li>Person2...</li>
-                </ul>
-            </li>
             <li class="list-group-item">
                 <a style="font-color: black;" th:href="@{'/projekt/edit/' + ${projekt.getId()}}">Bearbeiten</a>
             </li>

@@ -20,20 +20,21 @@
        href="/person/projekte">Alle Projekte</a>
 </p>
 <div class="row">
-   <div style="padding: 40px;" class="col-xs-6 col-sm-4" th:each="person : ${persons}" >
-       <h3 th:text="${person.getName()}"><b>Name</b></h3>
+   <div style="padding: 40px;" class="col-xs-6 col-sm-4" th:each="personMitProjekt : ${persons}" >
+       <h3 th:text="${personMitProjekt.person.getVorname()} + ' ' + ${personMitProjekt.person.getNachname()}"><b>Name</b></h3>
         <ul class="list-group">
-            <li class="list-group-item" th:text="'Jahres Lohn : ' + ${person.getJahresLohn()}" >Jahres Lohn</li>
-            <li class="list-group-item" th:text="'Kontakt Daten : ' + ${person.getKontaktDaten()}" >Kontakt Daten</li>
-            <li class="list-group-item" th:text="'Skills : ' + ${person.getSkills()}" >Skills</li>
+            <li class="list-group-item" th:text="'Jahres Lohn : ' + ${personMitProjekt.person.getJahreslohn()}" >Jahres Lohn</li>
+            <li class="list-group-item" th:text="'Kontakt Daten : ' + ${personMitProjekt.person.getKontakt()}" >Kontakt Daten</li>
+            <li class="list-group-item" th:text="'Skills : ' + ${personMitProjekt.person.getSkills()}" >Skills</li>
             <li class="list-group-item"><b>Vergangene Projekte: </b>
-                <ul >
-                    <li>Projekt1...</li>
-                    <li>Projekt2...</li>
+                <ul>
+                    <li th:each="project : ${personMitProjekt.projekte}" th:text="${project.titel} + ', ' + ${project.laufzeit}">
+                        <a style="font-color: black; display: block" th:href="@{'/person/projectDescription' + ${project.id}}"><p>Projektbeschreibung</p></a>
+                    </li>
                 </ul>
             </li>
             <li class="list-group-item">
-                <a style="font-color: black;" th:href="@{'/person/edit/' + ${person.getId()}}">Bearbeiten</a>
+                <a style="font-color: black;" th:href="@{'/person/edit/' + ${personMitProjekt.person.getId()}}">Bearbeiten</a>
             </li>
         </ul>
     </div>

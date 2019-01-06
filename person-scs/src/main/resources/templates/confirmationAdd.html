@@ -13,10 +13,10 @@
     </a>
 </p>
 <br>
-<h3 th:text="${person.getName()}"><b>Name</b></h3>
+<h3 th:text="${person.getVorname()} + ' ' + ${person.getNachname()}"><b>Name</b></h3>
 <ul class="list-group">
-    <li class="list-group-item" th:text="'Jahres Lohn: ' + ${person.getJahresLohn()}" >Jahres Lohn</li>
-    <li class="list-group-item" th:text="'Kontakt Daten: ' + ${person.getKontaktDaten()}" >Kontakt Daten</li>
+    <li class="list-group-item" th:text="'Jahres Lohn: ' + ${person.getJahreslohn()}" >Jahres Lohn</li>
+    <li class="list-group-item" th:text="'Kontakt Daten: ' + ${person.getKontakt()}" >Kontakt Daten</li>
     <li class="list-group-item" th:text="'Skills: ' + ${person.getSkills()}" >Skills</li>
     <li class="list-group-item">Vergangene Projekte :
         <ul >
