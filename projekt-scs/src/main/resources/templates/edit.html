@@ -7,8 +7,8 @@
 </head>
 <body>
 <form th:action="@{'/projekt/saveChanges/' + ${projekt.get().id}}" method="get">
-    Name:         <input type="text" name="name" th:value="${projekt.get().titel}"><br>
-    Beschreibung: <input type="text" name="description" th:value="${projekt.get().beschreibung}"><br>
+    Name:         <input type="text" name="titel" th:value="${projekt.get().titel}"><br>
+    Beschreibung: <input type="text" name="beschreibung" th:value="${projekt.get().beschreibung}"><br>
     Startdatum: <input type="text" name="startdatum" th:value="${projekt.get().startdatum}"><br>
     Laufzeit:       <input type="text" name="laufzeit" th:value="${projekt.get().laufzeit}"><br>
 

@@ -8,10 +8,10 @@ import javax.persistence.Id;
 
 @Data
 @Entity
-public class Event {
+public class ProjektEvent {
     @Id
     @GeneratedValue
     private Long id;
-    private Long personId;
+    private Long projektId;
     private String event;
 }

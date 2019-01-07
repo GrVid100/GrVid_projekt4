@@ -7,12 +7,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.function.client.WebClient;
-import propra2.person.Model.Event;
-import propra2.person.Model.Person;
-import propra2.person.Model.PersonMitProjekten;
-import propra2.person.Model.Projekt;
+import propra2.person.Model.*;
 import propra2.person.PersonNichtVorhanden;
-import propra2.person.Repository.EventReporitory;
+import propra2.person.Repository.EventRepository;
 import propra2.person.Repository.PersonRepository;
 import propra2.person.Repository.ProjektRepository;
 import reactor.core.publisher.Mono;
@@ -29,31 +26,41 @@ public class PersonController {
 	@Autowired
     ProjektRepository projektRepository;
 	@Autowired
-    EventReporitory eventReporitory;
+    EventRepository eventRepository;
 
 	@GetMapping("/")
 	public String mainpage(Model model) {
-		List<Person> persons = personRepository.findAll();
-		Projekt[] projekts = getAllEntity(Projekt[].class);
-		for(int i = 0; i < projekts.length; i++) {
-		    projektRepository.save(projekts[i]);
-        }
-        List<PersonMitProjekten> personsWithProjects = new ArrayList<>();
-        for (int i = 0; i < persons.size(); i++) {
-            PersonMitProjekten personWithProjects = new PersonMitProjekten();
-            Person person = persons.get(i);
-            personWithProjects.setPerson(person);
-            List<Projekt> projects = new ArrayList<>();
-            for (int j = 0; j < person.getProjekteId().length; j++) {
-                projects.add(projektRepository.findAllById(person.getProjekteId()[j]));
+		try {
+            ProjektEvent[] projektEvents = getProjektEvents(ProjektEvent[].class);
+            for (int i = 0; i < projektEvents.length; i++) {
+                String event = projektEvents[i].getEvent();
+                Long projektId = projektEvents[i].getProjektId();
+                if (event.equals("delete")) {
+                    projektRepository.deleteById(projektId);
+                }
+                else {
+                    Projekt changedProjekt = getEntity(projektId, Projekt.class);
+                    projektRepository.save(changedProjekt);
+                }
             }
-            personWithProjects.setProjekte(projects);
-            personsWithProjects.add(personWithProjects);
+        }
+        catch (Exception e) { }
+
+        List<Person> persons = personRepository.findAll();
+        List<PersonMitProjekten> personsMitProjekten = new ArrayList<>();
+        for (int i = 0; i < persons.size(); i++) {
+            PersonMitProjekten personMitProjekten = new PersonMitProjekten();
+            Person person = persons.get(i);
+            personMitProjekten.setPerson(person);
+            List<Projekt> projekte = new ArrayList<>();
+            for (int j = 0; j < person.getProjekteId().length; j++) {
+                projekte.add(projektRepository.findAllById(person.getProjekteId()[j]));
+            }
+            personMitProjekten.setProjekte(projekte);
+            personsMitProjekten.add(personMitProjekten);
         }
 
-
-		model.addAttribute("persons",personsWithProjects);
-
+		model.addAttribute("persons", personsMitProjekten);
 		return "index";
 	}
 
@@ -74,17 +81,24 @@ public class PersonController {
                                 Model model) {
         Person newPerson = new Person();
         newPerson.setVorname(vorname);
-        newPerson.setVorname(nachname);
+        newPerson.setNachname(nachname);
         newPerson.setJahreslohn(jahreslohn);
         newPerson.setKontakt(kontaktdaten);
         newPerson.setSkills(skills);
         newPerson.setProjekteId(vergangeneProjekte);
         personRepository.save(newPerson);
-        Event newEvent = new Event();
-        newEvent.setEvent("create");
-        newEvent.setPersonId(newPerson.getId());
-        eventReporitory.save(newEvent);
         model.addAttribute("person", newPerson);
+
+        List<Projekt> projekte = new ArrayList<>();
+        for (int j = 0; j < vergangeneProjekte.length; j++) {
+            projekte.add(projektRepository.findAllById(vergangeneProjekte[j]));
+        }
+
+        model.addAttribute("projekte", projekte);
+        PersonEvent newPersonEvent = new PersonEvent();
+        newPersonEvent.setEvent("create");
+        newPersonEvent.setPersonId(newPerson.getId());
+        eventRepository.save(newPersonEvent);
 
 	    return "confirmationAdd";
     }
@@ -92,20 +106,12 @@ public class PersonController {
     @GetMapping("/edit/{id}")
     public String edit(Model model, @PathVariable Long id) {
         Optional<Person> person = personRepository.findById(id);
-
         if (!person.isPresent()) {
             throw new PersonNichtVorhanden();
         }
         model.addAttribute("person", person);
         return "edit";
 	}
-
-    @GetMapping("/projekte")
-    public String index(Model model) {
-        final Projekt[] projekte = getEntity(new Long(1), Projekt[].class);
-        model.addAttribute("projekte", projekte);
-        return "projektee";
-    }
 
 	@RequestMapping("/saveChanges/{id}")
     public String saveChanges(@RequestParam("vorname") String vorname,
@@ -140,28 +146,15 @@ public class PersonController {
         return mono.block();
     }
 
-    private List<Projekt> getEntities(Long[] vergangeneProjekte) {
-	    List<Projekt> projekte = new ArrayList<>();
-	    if (vergangeneProjekte.length == 0) {
-	        return projekte;
-        }
-        for (int i = 0; i < vergangeneProjekte.length; i++) {
-            Projekt projekt = getEntity(vergangeneProjekte[i], Projekt.class);
-            projekte.add(projekt);
-        }
-        return projekte;
-    }
-
-    private static <T> T getAllEntity(final Class<T> type) {
+    private static <T> T getProjektEvents(final Class<T> type) {
         final Mono<T> mono = WebClient
                 .create()
                 .get()
-                .uri("http://projekt:8080/api/all")
+                .uri("http://projekt:8080/api/events")
                 .accept(MediaType.APPLICATION_JSON_UTF8)
                 .retrieve()
                 .bodyToMono(type);
 
         return mono.block();
     }
-
 }

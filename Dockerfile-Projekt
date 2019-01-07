@@ -1,4 +1,0 @@
-FROM java:8
-ADD projekt-scs/build/libs/projekt-scs-0.0.1-SNAPSHOT.jar projekt-scs.jar
-EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "projekt-scs.jar"]
