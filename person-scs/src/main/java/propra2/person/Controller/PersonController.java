@@ -106,9 +106,12 @@ public class PersonController {
     @GetMapping("/edit/{id}")
     public String edit(Model model, @PathVariable Long id) {
         Optional<Person> person = personRepository.findById(id);
+
         if (!person.isPresent()) {
             throw new PersonNichtVorhanden();
         }
+        List<Projekt> projekte = projektRepository.findAll();
+        model.addAttribute("projekte", projekte);
         model.addAttribute("person", person);
         return "edit";
 	}
@@ -119,16 +122,28 @@ public class PersonController {
                               @RequestParam("jahreslohn") String jahreslohn,
                               @RequestParam("kontakt") String kontakt,
                               @RequestParam("skills") String[] skills,
+                              @RequestParam("vergangeneProjekte") Long[] vergangeneProjekte,
                               @PathVariable Long id,
                               Model model) {
         Optional<Person> person = personRepository.findById(id);
         person.get().setVorname(vorname);
-        person.get().setVorname(nachname);
+        person.get().setNachname(nachname);
         person.get().setJahreslohn(jahreslohn);
         person.get().setKontakt(kontakt);
         person.get().setSkills(skills);
-
+        person.get().setProjekteId(vergangeneProjekte);
         personRepository.save(person.get());
+
+        PersonEvent newPersonEvent = new PersonEvent();
+        newPersonEvent.setEvent("edit");
+        newPersonEvent.setPersonId(id);
+        eventRepository.save(newPersonEvent);
+
+        List<Projekt> projekts = new ArrayList<>();
+        for(int i=0; i<vergangeneProjekte.length; i++){
+            projekts.add(projektRepository.findAllById(vergangeneProjekte[i]));
+        }
+        model.addAttribute("projekte", projekts);
         model.addAttribute("person", person);
 
         return "confirmationEdit";

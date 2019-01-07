@@ -1,0 +1,32 @@
+# FROM mysql
+
+# ENV MYSQL_ROOT_PASSWORD="root"
+# ENV MYSQL_DATABASE="projekt4"
+
+# ADD files/persondb.sql /docker-entrypoint-initdb.d/persondb.sql
+
+# FROM openjdk:8-jdk-alpine AS build
+# WORKDIR /person-scs
+# COPY . ./
+# RUN ./gradlew --no-daemon --stacktrace clean bootJar
+
+
+
+# FROM openjdk:8-jre-alpine
+# RUN apk add --no-cache bash
+# WORKDIR /person-scs
+
+# COPY wait-for-it.sh .
+# COPY --from=build /app/build/libs/*.jar person-scs.jar
+
+# CMD java -jar person-scs.jar
+
+FROM java:8
+ADD person-scs/build/libs/person-scs-0.0.1-SNAPSHOT.jar person-scs.jar
+EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "person-scs.jar"]
+
+
+
+
+

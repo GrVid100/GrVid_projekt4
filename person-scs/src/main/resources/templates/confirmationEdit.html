@@ -8,22 +8,24 @@
 <body>
 <p class="navbar navbar-dark bg-primary">
     <a href="/person" class="navbar-brand d-flex align-items-center">
-        <strong>Übersicht aller Personen</strong>
+        <strong>Personseite</strong>
     </a>
 </p>
 <br>
-<h3 style="font-size: x-large;" th:text="${person.get().name}">Person</h3>
+<h3 style="font-size: x-large;" th:text="${person.get().vorname} + ' ' + ${person.get().nachname}">Person</h3>
 <ul class="list-group">
-    <li class="list-group-item" th:text="'Jahres Lohn: ' + ${person.get().jahresLohn}" >Jahres Lohn</li>
-    <li class="list-group-item" th:text="'Kontakt Daten: ' + ${person.get().kontaktDaten}" >Kontakt Daten</li>
+    <li class="list-group-item" th:text="'Jahres Lohn: ' + ${person.get().jahreslohn}" >Jahres Lohn</li>
+    <li class="list-group-item" th:text="'Kontakt Daten: ' + ${person.get().kontakt}" >Kontakt Daten</li>
     <li class="list-group-item"><b>Skills: </b>
         <ul>
-            <li th:each="skill : ${person.skills}" th:text="${skill}">Skills</li>
+            <li th:each="skill : ${person.get().skills}" th:text="${skill}"></li>
         </ul>
     </li>
     <li class="list-group-item"><b>Vergangene Projekte: </b>
         <ul>
-            <li th:each="projekt : ${person.projekte}" th:text="${projekt.titel} + ', ' + ${projekt.laufzeit}"></li></li>
+            <li th:each="project : ${projekte}" th:text="${project.getTitel()} + ', ' + ${project.getLaufzeit()}">
+                <a style="font-color: black; display: block" th:href="@{'/person/projectDescription' + ${project.getId()}}"><p>Projektbeschreibung</p></a>
+            </li>
         </ul>
     </li>
 </ul>

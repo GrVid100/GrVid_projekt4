@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import propra2.person.Model.PersonApi;
 import propra2.person.Model.PersonEvent;
 import propra2.person.Model.Person;
 import propra2.person.Repository.EventRepository;
@@ -22,9 +23,9 @@ public class PersonRestController {
     EventRepository eventRepository;
 
     @GetMapping("/{id}")
-    public Person getById(@PathVariable Long id){
-        Optional<Person> projekt = personRepository.findById(id);
-        return projekt.get();
+    public PersonApi getById(@PathVariable Long id){
+        Optional<Person> person = personRepository.findById(id);
+        return new PersonApi(person.get());
     }
 
     @GetMapping("/events")
