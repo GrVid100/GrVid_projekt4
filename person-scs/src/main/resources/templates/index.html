@@ -23,7 +23,7 @@
             <li class="list-group-item" th:text="'Kontakt Daten : ' + ${personMitProjekt.person.kontakt}" >Kontakt Daten</li>
             <li class="list-group-item"><b>Skills: </b>
                 <ul>
-                    <li th:each="skill : ${personMitProjekt.person.skills}" th:text="${skill}">Skills</li>
+                    <li th:if="${personMitProjekt.person.skills != null}" th:each="skill : ${personMitProjekt.person.skills}" th:text="${skill}">Skills</li>
                 </ul>
             </li>
             <li class="list-group-item"><b>Vergangene Projekte: </b>

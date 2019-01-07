@@ -84,7 +84,9 @@ public class PersonController {
         newPerson.setNachname(nachname);
         newPerson.setJahreslohn(jahreslohn);
         newPerson.setKontakt(kontaktdaten);
-        newPerson.setSkills(skills);
+        if (skills != null) {
+            newPerson.setSkills(skills);
+        }
         newPerson.setProjekteId(vergangeneProjekte);
         personRepository.save(newPerson);
         model.addAttribute("person", newPerson);
@@ -130,7 +132,9 @@ public class PersonController {
         person.get().setNachname(nachname);
         person.get().setJahreslohn(jahreslohn);
         person.get().setKontakt(kontakt);
-        person.get().setSkills(skills);
+        if (skills != null) {
+            person.get().setSkills(skills);
+        }
         person.get().setProjekteId(vergangeneProjekte);
         personRepository.save(person.get());
 

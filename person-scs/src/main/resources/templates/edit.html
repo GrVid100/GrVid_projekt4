@@ -8,7 +8,7 @@
 <body>
 <form th:action="@{'/person/saveChanges/' + ${person.get().id}}" method="get">
     <div class="col-md-3 mb-3">
-        Vorname:         <input type="text" name="vorname" th:value="${person.get().vorname}"><br>
+        Vorname:      <input type="text" name="vorname" th:value="${person.get().vorname}"><br>
         Nachname:     <input type="text" name="nachname" th:value="${person.get().nachname}"><br>
         Jahreslohn:   <input type="number" name="jahreslohn" th:value="${person.get().jahreslohn}"><br>
         Kontaktdaten: <input type="email" name="kontakt" th:value="${person.get().kontakt}"><br>
@@ -22,7 +22,7 @@
             <option value="C++">C++</option>
             <option value="HTML">HTML</option>
         </select><br>
-        Vergangene Projekte:
+        Vergangene Projekte:<br>
         <select name="vergangeneProjekte" multiple>
             <option th:each="projekt : ${projekte}" th:text="${projekt.titel}" th:value="${projekt.id}">Projekte</option>
         </select>
