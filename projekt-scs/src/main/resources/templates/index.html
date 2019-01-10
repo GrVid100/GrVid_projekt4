@@ -15,18 +15,11 @@
 </p>
 <div class="row">
    <div style="padding: 40px;" class="col-xs-6 col-sm-4" th:each="projekt : ${projekts}">
-       <h3 th:text="${projekt.getName()}"><b>Name</b></h3>
+       <h3 th:text="${projekt.getTitel()}"><b>Name</b></h3>
         <ul class="list-group">
-            <li class="list-group-item" th:text="${projekt.getDescription()}">Beschrebigun</li>
-            <li class="list-group-item" th:text="'Budget: ' + ${projekt.getBudget()}">Budget</li>
+            <li class="list-group-item" th:text="${projekt.getBeschreibung()}">Beschrebigun</li>
             <li class="list-group-item" th:text="'Startdatum: ' + ${projekt.getStartdatum()}">Startdatum</li>
             <li class="list-group-item" th:text="'Laufzeit: ' + ${projekt.getLaufzeit()}">Laufzeit</li>
-            <li class="list-group-item"><b>Team: </b>
-                <ul >
-                    <li>Person1...</li>
-                    <li>Person2...</li>
-                </ul>
-            </li>
             <li class="list-group-item">
                 <a style="font-color: black;" th:href="@{'/projekt/edit/' + ${projekt.getId()}}">Bearbeiten</a>
             </li>

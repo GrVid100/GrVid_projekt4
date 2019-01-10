@@ -1,4 +1,4 @@
-package propra2.projekt;
+package propra2.projekt.Controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -7,6 +7,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import propra2.projekt.Model.ProjektEvent;
+import propra2.projekt.Model.Projekt;
+import propra2.projekt.ProjektNichtVorhanden;
+import propra2.projekt.Respository.EventRepository;
+import propra2.projekt.Respository.ProjektRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,13 +19,11 @@ import java.util.Optional;
 @Controller
 public class ProjektController {
 
-//	@GetMapping("**") // Match all GET Requests
-//	public @ResponseBody String whatever() {
-//		return "Hallo, ich bin das Projekt-SCS";
-//	}
-
 	@Autowired
     ProjektRepository projektRepository;
+
+	@Autowired
+    EventRepository eventRepository;
 
 	@GetMapping("/")
 	public String mainPage(Model model) {
@@ -36,21 +39,24 @@ public class ProjektController {
     }
 
     @RequestMapping("/add")
-    public String addToDatabase(@RequestParam("name") String name,
-                                @RequestParam("description") String description,
-                                @RequestParam("budget") String budget,
+    public String addToDatabase(@RequestParam("titel") String titel,
+                                @RequestParam("beschreibung") String beschreibung,
                                 @RequestParam("startdatum") String startdatum,
                                 @RequestParam("laufzeit") String laufzeit,
                                 Model model) {
         Projekt newProjekt = new Projekt();
-        newProjekt.setName(name);
-        newProjekt.setDescription(description);
-        newProjekt.setBudget(budget);
+        newProjekt.setTitel(titel);
+        newProjekt.setBeschreibung(beschreibung);
         newProjekt.setStartdatum(startdatum);
         newProjekt.setLaufzeit(laufzeit);
         projektRepository.save(newProjekt);
 
         model.addAttribute("projekt", newProjekt);
+
+        ProjektEvent newProjektEvent = new ProjektEvent();
+        newProjektEvent.setProjektId(newProjekt.getId());
+        newProjektEvent.setEvent("create");
+        eventRepository.save(newProjektEvent);
 
 	    return "confirmationAdd";
     }
@@ -67,22 +73,24 @@ public class ProjektController {
 	}
 
 	@RequestMapping("/saveChanges/{id}")
-    public String saveChanges(@RequestParam("name") String name,
-                              @RequestParam("description") String description,
-                              @RequestParam("budget") String budget,
+    public String saveChanges(@RequestParam("titel") String name,
+                              @RequestParam("beschreibung") String description,
                               @RequestParam("startdatum") String startdatum,
                               @RequestParam("laufzeit") String laufzeit,
                               @PathVariable Long id,
                               Model model) {
         Optional<Projekt> projekt = projektRepository.findById(id);
-        projekt.get().setName(name);
-        projekt.get().setDescription(description);
-        projekt.get().setBudget(budget);
+
+        projekt.get().setTitel(name);
+        projekt.get().setBeschreibung(description);
         projekt.get().setStartdatum(startdatum);
         projekt.get().setLaufzeit(laufzeit);
-
         projektRepository.save(projekt.get());
         model.addAttribute("projekt", projekt);
+
+        ProjektEvent newProjektEvent = new ProjektEvent();
+        newProjektEvent.setProjektId(id);
+        newProjektEvent.setEvent("edit");
 
         return "confirmationEdit";
 	}

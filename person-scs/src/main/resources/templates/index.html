@@ -8,32 +8,31 @@
 <body>
 <p class="navbar navbar-dark bg-primary">
     <a href="/person" class="navbar-brand d-flex align-items-center">
-        <strong>Personseite</strong>
+        <strong>Übersicht aller Personen</strong>
     </a>
 </p>
 <p style="text-align: center">
     <a class="btn btn-primary my-2"
-       href="/person/addPerson">Add Person</a>
-</p>
-<p style="text-align: center">
-    <a class="btn btn-primary my-2"
-       href="/person/projekte">Alle Projekte</a>
+       href="/person/addPerson">Person hinzufügen</a>
 </p>
 <div class="row">
-   <div style="padding: 40px;" class="col-xs-6 col-sm-4" th:each="person : ${persons}" >
-       <h3 th:text="${person.getName()}"><b>Name</b></h3>
+   <div style="padding: 40px;" class="col-xs-6 col-sm-4" th:each="personMitProjekt : ${persons}" >
+       <h3 th:text="${personMitProjekt.person.vorname}+ ' ' + ${personMitProjekt.person.nachname}"><b>Name</b></h3>
         <ul class="list-group">
-            <li class="list-group-item" th:text="'Jahres Lohn : ' + ${person.getJahresLohn()}" >Jahres Lohn</li>
-            <li class="list-group-item" th:text="'Kontakt Daten : ' + ${person.getKontaktDaten()}" >Kontakt Daten</li>
-            <li class="list-group-item" th:text="'Skills : ' + ${person.getSkills()}" >Skills</li>
+            <li class="list-group-item" th:text="'Jahres Lohn : ' + ${personMitProjekt.person.jahreslohn}" >Jahres Lohn</li>
+            <li class="list-group-item" th:text="'Kontakt Daten : ' + ${personMitProjekt.person.kontakt}" >Kontakt Daten</li>
+            <li class="list-group-item"><b>Skills: </b>
+                <ul>
+                    <li th:if="${personMitProjekt.person.skills != null}" th:each="skill : ${personMitProjekt.person.skills}" th:text="${skill}">Skills</li>
+                </ul>
+            </li>
             <li class="list-group-item"><b>Vergangene Projekte: </b>
-                <ul >
-                    <li>Projekt1...</li>
-                    <li>Projekt2...</li>
+                <ul>
+                    <li th:each="projekt : ${personMitProjekt.projekte}" th:text="${projekt.titel} + ', ' + ${projekt.laufzeit}"></li></li>
                 </ul>
             </li>
             <li class="list-group-item">
-                <a style="font-color: black;" th:href="@{'/person/edit/' + ${person.getId()}}">Bearbeiten</a>
+                <a style="font-color: black;" th:href="@{'/person/edit/' + ${personMitProjekt.person.id}}">Bearbeiten</a>
             </li>
         </ul>
     </div>

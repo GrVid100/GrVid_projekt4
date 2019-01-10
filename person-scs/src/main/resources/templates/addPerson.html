@@ -3,18 +3,32 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Add Person</title>
+    <title>Person hinzufügen</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
 </head>
 <body>
 
 <form action="/person/add" method="get">
     <div class="col-md-3 mb-3">
-        Name:         <input type="text" name="name"><br>
+        Vorname:         <input type="text" name="vorname"><br>
+        Nachname:         <input type="text" name="nachname"><br>
         Jahreslohn:   <input type="number" name="jahreslohn"><br>
-        Kontaktdaten: <input type="email" name="kontaktdaten"><br>
-        Skills:       <input type="text" name="skills"><br><br>
-        Vergangene Projekte: <input type="text" name="vergangeneProjekte"><br>
+        Kontaktdaten: <input type="email" name="kontakt"><br>
+        Skills: <br>
+        <select name="skills" multiple>
+            <option value="PHP">PHP</option>
+            <option value="Python">Python</option>
+            <option value="Java">Java</option>
+            <option value="Javascript">Javascript</option>
+            <option value="C">C</option>
+            <option value="C++">C++</option>
+            <option value="HTML">HTML</option>
+        </select>
+        <br><br>
+        Vergangene Projekte: <br>
+        <select name="vergangeneProjekte" multiple>
+            <option th:each="projekt : ${projekte}" th:text="${projekt.titel}" th:value="${projekt.id}">Projekte</option>
+        </select>
     </div>
     <button class="btn btn-primary my-2" type="submit">Submit</button>
 </form>
