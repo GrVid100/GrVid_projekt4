@@ -27,6 +27,8 @@ services:
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_DATABASE=personen
       - MYSQL_PASSWORD=root
+    volumes:
+      - ./datavolume_person:/var/lib/mysql
   # ========================================
   # Falls Sie das Projekt-SCS implementieren
   # ergänzen Sie diesen Teil
