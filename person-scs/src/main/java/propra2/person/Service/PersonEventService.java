@@ -11,7 +11,7 @@ public class PersonEventService {
     @Autowired
     EventRepository eventRepository;
 
-    public void makeCreateEvent(Person newPerson) {
+    public void createEvent(Person newPerson) {
         PersonEvent newPersonEvent = new PersonEvent();
         newPersonEvent.setEvent("create");
         newPersonEvent.setPersonId(newPerson.getId());

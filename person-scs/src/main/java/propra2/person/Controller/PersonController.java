@@ -7,7 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import propra2.person.Service.PersonEventService;
 import propra2.person.Service.PersonenMitProjektenService;
-import propra2.person.Service.UpdateProjekteService;
+import propra2.person.Service.ProjekteService;
 import propra2.person.Model.*;
 import propra2.person.PersonNichtVorhanden;
 import propra2.person.Repository.EventRepository;
@@ -26,7 +26,7 @@ public class PersonController {
 	@Autowired
     EventRepository eventRepository;
 	@Autowired
-    UpdateProjekteService updateProjekteService;
+    ProjekteService projekteService;
 	@Autowired
     PersonenMitProjektenService personenMitProjektenService;
     @Autowired
@@ -34,10 +34,9 @@ public class PersonController {
 
 	@GetMapping("/")
 	public String mainpage(Model model) {
-	    updateProjekteService.updateProjekte();
-
+	    projekteService.updateProjekte();
 	    List<PersonMitProjekten> personsMitProjekten = personenMitProjektenService.returnPersonenMitProjekten();
-		model.addAttribute("persons", personsMitProjekten);
+	    model.addAttribute("persons", personsMitProjekten);
 		return "index";
 	}
 
@@ -68,13 +67,9 @@ public class PersonController {
         personRepository.save(newPerson);
         model.addAttribute("person", newPerson);
 
-        List<Projekt> projekte = new ArrayList<>();
-        for (int j = 0; j < vergangeneProjekte.length; j++) {
-            projekte.add(projektRepository.findAllById(vergangeneProjekte[j]));
-        }
-
+        List<Projekt> projekte = projekteService.getProjekte(vergangeneProjekte);
         model.addAttribute("projekte", projekte);
-        personEventService.makeCreateEvent(newPerson);
+        personEventService.createEvent(newPerson);
 
 	    return "confirmationAdd";
     }
@@ -82,7 +77,6 @@ public class PersonController {
     @GetMapping("/edit/{id}")
     public String edit(Model model, @PathVariable Long id) {
         Optional<Person> person = personRepository.findById(id);
-
         if (!person.isPresent()) {
             throw new PersonNichtVorhanden();
         }
@@ -111,13 +105,10 @@ public class PersonController {
         }
         person.get().setProjekteId(vergangeneProjekte);
         personRepository.save(person.get());
-
         personEventService.editEvent(id);
 
-        List<Projekt> projekts = new ArrayList<>();
-        for(int i=0; i<vergangeneProjekte.length; i++){
-            projekts.add(projektRepository.findAllById(vergangeneProjekte[i]));
-        }
+        List<Projekt> projekts = projekteService.getProjekte(vergangeneProjekte);
+
         model.addAttribute("projekte", projekts);
         model.addAttribute("person", person);
 

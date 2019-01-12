@@ -9,8 +9,11 @@ import propra2.person.Model.ProjektEvent;
 import propra2.person.Repository.ProjektRepository;
 import reactor.core.publisher.Mono;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
-public class UpdateProjekteService {
+public class ProjekteService {
 
     @Autowired
     ProjektRepository projektRepository;
@@ -31,6 +34,14 @@ public class UpdateProjekteService {
             }
         }
         catch (Exception e) { }
+    }
+
+    public List<Projekt> getProjekte(Long[] vergangeneProjekte) {
+        List<Projekt> projekts = new ArrayList<>();
+        for (int i = 0; i < vergangeneProjekte.length; i++) {
+            projekts.add(projektRepository.findAllById(vergangeneProjekte[i]));
+        }
+        return projekts;
     }
 
     private static <T> T getProjektEvents(final Class<T> type) {
