@@ -1,10 +1,7 @@
 package propra2.projekt.Controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import propra2.projekt.Model.ProjektEvent;
 import propra2.projekt.Model.Projekt;
 import propra2.projekt.Respository.EventRepository;
@@ -27,7 +24,7 @@ public class ProjektRestController {
         return projekt.get();
     }
 
-    @GetMapping("/events")
+    @PostMapping("/events")
     public List<ProjektEvent> getEvents() {
         List<ProjektEvent> projektEvents = eventRepository.findAll();
         eventRepository.deleteAll();

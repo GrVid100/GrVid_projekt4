@@ -1,5 +1,8 @@
 package propra2.person.Model;
 
+import lombok.Data;
+
+@Data
 public class PersonApi {
     private Long id;
     private String vorname;

@@ -2,64 +2,41 @@ package propra2.person.Controller;
 
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.reactive.function.client.WebClient;
+import propra2.person.Service.PersonEventService;
+import propra2.person.Service.PersonenMitProjektenService;
+import propra2.person.Service.UpdateProjekteService;
 import propra2.person.Model.*;
 import propra2.person.PersonNichtVorhanden;
 import propra2.person.Repository.EventRepository;
 import propra2.person.Repository.PersonRepository;
 import propra2.person.Repository.ProjektRepository;
-import reactor.core.publisher.Mono;
 
 import java.util.*;
 
 @Data
 @Controller
 public class PersonController {
-
-
 	@Autowired
     PersonRepository personRepository;
 	@Autowired
     ProjektRepository projektRepository;
 	@Autowired
     EventRepository eventRepository;
+	@Autowired
+    UpdateProjekteService updateProjekteService;
+	@Autowired
+    PersonenMitProjektenService personenMitProjektenService;
+    @Autowired
+    PersonEventService personEventService;
 
 	@GetMapping("/")
 	public String mainpage(Model model) {
-		try {
-            ProjektEvent[] projektEvents = getProjektEvents(ProjektEvent[].class);
-            for (int i = 0; i < projektEvents.length; i++) {
-                String event = projektEvents[i].getEvent();
-                Long projektId = projektEvents[i].getProjektId();
-                if (event.equals("delete")) {
-                    projektRepository.deleteById(projektId);
-                }
-                else {
-                    Projekt changedProjekt = getEntity(projektId, Projekt.class);
-                    projektRepository.save(changedProjekt);
-                }
-            }
-        }
-        catch (Exception e) { }
+	    updateProjekteService.updateProjekte();
 
-        List<Person> persons = personRepository.findAll();
-        List<PersonMitProjekten> personsMitProjekten = new ArrayList<>();
-        for (int i = 0; i < persons.size(); i++) {
-            PersonMitProjekten personMitProjekten = new PersonMitProjekten();
-            Person person = persons.get(i);
-            personMitProjekten.setPerson(person);
-            List<Projekt> projekte = new ArrayList<>();
-            for (int j = 0; j < person.getProjekteId().length; j++) {
-                projekte.add(projektRepository.findAllById(person.getProjekteId()[j]));
-            }
-            personMitProjekten.setProjekte(projekte);
-            personsMitProjekten.add(personMitProjekten);
-        }
-
+	    List<PersonMitProjekten> personsMitProjekten = personenMitProjektenService.returnPersonenMitProjekten();
 		model.addAttribute("persons", personsMitProjekten);
 		return "index";
 	}
@@ -97,10 +74,7 @@ public class PersonController {
         }
 
         model.addAttribute("projekte", projekte);
-        PersonEvent newPersonEvent = new PersonEvent();
-        newPersonEvent.setEvent("create");
-        newPersonEvent.setPersonId(newPerson.getId());
-        eventRepository.save(newPersonEvent);
+        personEventService.makeCreateEvent(newPerson);
 
 	    return "confirmationAdd";
     }
@@ -138,10 +112,7 @@ public class PersonController {
         person.get().setProjekteId(vergangeneProjekte);
         personRepository.save(person.get());
 
-        PersonEvent newPersonEvent = new PersonEvent();
-        newPersonEvent.setEvent("edit");
-        newPersonEvent.setPersonId(id);
-        eventRepository.save(newPersonEvent);
+        personEventService.editEvent(id);
 
         List<Projekt> projekts = new ArrayList<>();
         for(int i=0; i<vergangeneProjekte.length; i++){
@@ -152,28 +123,4 @@ public class PersonController {
 
         return "confirmationEdit";
 	}
-
-    private static <T> T getEntity(final Long id, final Class<T> type) {
-        final Mono<T> mono = WebClient
-                .create()
-                .get()
-                .uri("http://projekt:8080/api/" + id)
-                .accept(MediaType.APPLICATION_JSON_UTF8)
-                .retrieve()
-                .bodyToMono(type);
-
-        return mono.block();
-    }
-
-    private static <T> T getProjektEvents(final Class<T> type) {
-        final Mono<T> mono = WebClient
-                .create()
-                .get()
-                .uri("http://projekt:8080/api/events")
-                .accept(MediaType.APPLICATION_JSON_UTF8)
-                .retrieve()
-                .bodyToMono(type);
-
-        return mono.block();
-    }
 }
