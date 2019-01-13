@@ -59,26 +59,25 @@ public class PersonController {
     public String addToDatabase(@RequestParam("vorname") String vorname,
                                 @RequestParam("nachname") String nachname,
                                 @RequestParam("jahreslohn") String jahreslohn,
-                                @RequestParam("kontaktdaten") String kontaktdaten,
+                                @RequestParam("kontakt") String kontakt,
                                 @RequestParam(value = "skills", defaultValue = "keine", required = false) String[] skills,
                                 @RequestParam(value = "vergangeneProjekte", required = false) Long[] vergangeneProjekte,
                                 Model model) {
-        Person newPerson = new Person();
-        List<Projekt> projekte = new ArrayList<>();
-        newPerson.setVorname(vorname);
-        newPerson.setNachname(nachname);
-        newPerson.setJahreslohn(jahreslohn);
-        newPerson.setKontakt(kontaktdaten);
-        newPerson.setSkills(skills);
+        Person newPerson = new Person(vorname,nachname,jahreslohn,kontakt,skills,vergangeneProjekte);
+        personRepository.save(newPerson);
+        model.addAttribute("person", newPerson);
+
         if(vergangeneProjekte != null) {
+            List<Projekt> projekte;
             newPerson.setProjekteId(vergangeneProjekte);
             projekte = projekteService.getProjekte(vergangeneProjekte);
+            model.addAttribute("projekte", projekte);
         }
-        personRepository.save(newPerson);
+
         model.addAttribute("person", newPerson);
         personEventService.createEvent(newPerson);
 
-        model.addAttribute("projekte", projekte);
+
 	    return "confirmationAdd";
     }
 

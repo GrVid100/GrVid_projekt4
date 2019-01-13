@@ -1,4 +1,4 @@
-package propra2.person;
+package propra2.person.Controller;
 
 import org.junit.Before;
 import org.junit.Test;

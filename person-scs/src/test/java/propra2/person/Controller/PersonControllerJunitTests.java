@@ -1,5 +1,6 @@
-package propra2.person;
+package propra2.person.Controller;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,7 +15,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
-import propra2.person.Controller.PersonController;
 import propra2.person.Model.Person;
 import propra2.person.Model.PersonEvent;
 import propra2.person.Model.Projekt;
@@ -31,21 +31,18 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.AllOf.allOf;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
 @RunWith(MockitoJUnitRunner.class)
-//@RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
 @ContextConfiguration(classes = {TestContext.class, WebApplicationContext.class})
 @WebAppConfiguration
 
-public class PersonControllerIntegrationTests {
+public class PersonControllerJunitTests {
 
     private Person firstPerson = new Person("Tom", "Stark", "10000",
             "tung@gmail.com", new String[]{"Java", "Python"}, new Long[]{1L});
@@ -72,10 +69,7 @@ public class PersonControllerIntegrationTests {
         vergangeneProjekt.add(firstProjekt);
         //Person erzeugen
         firstPerson.setId(2L);
-
-        // when
-        when(personRepository.findAll()).thenReturn(Arrays.asList(firstPerson));
-        when(personRepository.findById(anyLong())).thenReturn(java.util.Optional.ofNullable(firstPerson));
+        when(personRepository.findById(2L)).thenReturn(java.util.Optional.ofNullable(firstPerson));
         when(personRepository.save(Mockito.isA(Person.class))).thenReturn(firstPerson);
 
 
@@ -85,26 +79,32 @@ public class PersonControllerIntegrationTests {
         viewResolver.setSuffix(".jsp");
         // Projekt erzeugen
         firstProjekt.setId(1L);
-        //when
         when(projektRepository.findAll()).thenReturn(Arrays.asList(firstProjekt));
-        when(projektRepository.findAllById(1L)).thenReturn(firstProjekt);
-        // EventRepository
-        //when(eventRepository.save(Mockito.isA(PersonEvent.class))).thenReturn(newPersonevent);
-        //PersonEventService
-        //doNothing().when(personEventService).createEvent(any());
+
         // build mockmvc
         this.mockMvc = MockMvcBuilders.standaloneSetup(new PersonController(projektRepository, personRepository,eventRepository,projekteService,personenMitProjektenService,personEventService))
                 .setViewResolvers(viewResolver)
                 .build();
     }
-
+    @After
+    public void clear(){
+        projektRepository.deleteAll();
+        personRepository.deleteAll();
+    }
+    @Test
+    public void MainPAGE_TEST() throws Exception{
+        mockMvc.perform(get("/"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("index"));
+        verify(projekteService,times(1)).updateProjekte();
+        verify(personenMitProjektenService,times(1)).returnPersonenMitProjekten();
+    }
     @Test
     public void AddPersonPageTEST() throws Exception {
         mockMvc.perform(get("/addPerson"))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(view().name("addPerson"))
-                .andExpect(model().attribute("projekte", hasSize(1)))
                 .andExpect(model().attribute("projekte", hasItem(
                         allOf(
                                 hasProperty("titel", is("projekt4")),
@@ -118,7 +118,7 @@ public class PersonControllerIntegrationTests {
     }
 
     @Test
-    public void AddToDatabaseTEST() throws Exception {
+    public void AddToDatabaseTEST_fullInfo() throws Exception {
         Long[] vergangeneProjekte =new Long[]{1L};
         vergangeneProjekt.add(firstProjekt);
         when(projekteService.getProjekte(any())).thenReturn((vergangeneProjekt));
@@ -133,7 +133,6 @@ public class PersonControllerIntegrationTests {
                 .param("vergangeneProjekte", "1")
         )
                 .andDo(print())
-                .andExpect(view().name("confirmationAdd"))
                 .andExpect(model().attribute("person",
                         allOf(
                                 hasProperty("projekteId", is(vergangeneProjekte)),
@@ -153,7 +152,7 @@ public class PersonControllerIntegrationTests {
                                 hasProperty("laufzeit", is("10 Monaten"))
                                 //,hasProperty("team", is("1"))
                         )
-                        )))
+                )))
         ;
         verify(personRepository, times(1)).save(isA(Person.class));
         verify(projekteService, times(1)).getProjekte(any());
@@ -161,15 +160,43 @@ public class PersonControllerIntegrationTests {
 
     }
 
-    //TODO
+    @Test
+    public void AddToDatabaseTEST_no_Projekt() throws Exception {
+        vergangeneProjekt.add(firstProjekt);
+        mockMvc.perform(get("/add")
+
+                .param("vorname", "Tom")
+                .param("nachname", "Stark")
+                .param("jahreslohn", "10000")
+                .param("kontakt", "tung@gmail.com")
+
+        )
+                .andDo(print())
+                .andExpect(model().attribute("person",
+                        allOf(
+                                hasProperty("kontakt", is("tung@gmail.com")),
+                                hasProperty("jahreslohn", is("10000")),
+                                hasProperty("nachname", is("Stark")),
+                                hasProperty("vorname", is("Tom"))
+                        )
+                ))
+                .andExpect(model().size(1))
+
+        ;
+        verify(personRepository, times(1)).save(isA(Person.class));
+        verify(personEventService, times(1)).createEvent(any());
+
+    }
+    //status muss OK und Exception
     @Test
     public void editTEST_PersonnichtVorhanden() throws Exception {
-        mockMvc.perform(get("/edit/{id}", 2L))
+        mockMvc.perform(get("/edit/{id}", 3L))
                 .andDo(print())
                 .andExpect(status().isNotFound())
         ;
 
-        verify(personRepository, times(1)).findById(2L);
+        verify(personRepository, times(1)).findById(anyLong());
+        verify(projektRepository, times(0)).findAll();
         verifyZeroInteractions(personRepository);
     }
 
@@ -194,13 +221,6 @@ public class PersonControllerIntegrationTests {
             verify(personRepository, times(1)).findById(1L);
             verifyZeroInteractions(personRepository);
     }
-
-
-
-
-
-    // kann nicht Optional Object Testen,
-    // Können wir   Optional<Person> findById(Long id); ---> Person findById(Long id); ????
        @Test
     public void saveChanges_TEST() throws Exception {
 
@@ -223,23 +243,6 @@ public class PersonControllerIntegrationTests {
 
     }
 
-    @Test
-    public void AddPersonPage() throws Exception {
-        mockMvc.perform(get("/addPerson"))
-                .andExpect(status().isOk())
-                .andDo(print())
-                .andExpect(view().name("addPerson"))
-                .andExpect(model().attribute("projekte", hasSize(1)))
-                .andExpect(model().attribute("projekte", hasItem(
-                        allOf(
-                                hasProperty("titel", is("projekt4")),
-                                hasProperty("beschreibung", is("description")),
-                                hasProperty("startdatum", is("30.10.2018")),
-                                hasProperty("laufzeit", is("10 Monaten"))
-                        )
-                )));
-        verify(projektRepository, times(1)).findAll();
-        verifyNoMoreInteractions(projektRepository);
-    }
+
 
 }
