@@ -18,33 +18,36 @@ public class ProjekteService {
     @Autowired
     ProjektRepository projektRepository;
 
+    public ProjekteService(ProjektRepository projektRepository) {
+        this.projektRepository=projektRepository;
+    }
+
     public void updateProjekte() {
         try {
             ProjektEvent[] projektEvents = getProjektEvents(ProjektEvent[].class);
-            for (int i = 0; i < projektEvents.length; i++) {
-                String event = projektEvents[i].getEvent();
-                Long projektId = projektEvents[i].getProjektId();
+            for (ProjektEvent projektEvent : projektEvents) {
+                String event = projektEvent.getEvent();
+                Long projektId = projektEvent.getProjektId();
                 if (event.equals("delete")) {
                     projektRepository.deleteById(projektId);
-                }
-                else {
+                } else {
                     Projekt changedProjekt = getEntity(projektId, Projekt.class);
                     projektRepository.save(changedProjekt);
                 }
             }
         }
-        catch (Exception e) { }
+        catch (Exception ignored) { }
     }
 
     public List<Projekt> getProjekte(Long[] vergangeneProjekte) {
         List<Projekt> projekts = new ArrayList<>();
-        for (int i = 0; i < vergangeneProjekte.length; i++) {
-            projekts.add(projektRepository.findAllById(vergangeneProjekte[i]));
+        for (Long aLong : vergangeneProjekte) {
+            projekts.add(projektRepository.findAllById(aLong));
         }
         return projekts;
     }
 
-    private static <T> T getProjektEvents(final Class<T> type) {
+    protected static <T> T getProjektEvents(final Class<T> type) {
         final Mono<T> mono = WebClient
                 .create()
                 .post()

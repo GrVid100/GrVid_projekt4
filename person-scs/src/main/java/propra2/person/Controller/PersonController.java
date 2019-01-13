@@ -31,8 +31,16 @@ public class PersonController {
     PersonenMitProjektenService personenMitProjektenService;
     @Autowired
     PersonEventService personEventService;
+    public PersonController(ProjektRepository projektRepository, PersonRepository personRepository, EventRepository eventRepository,ProjekteService projekteService,PersonenMitProjektenService personenMitProjektenService,PersonEventService personEventService) {
+        this.projektRepository=projektRepository;
+        this.personRepository=personRepository;
+        this.eventRepository=eventRepository;
+        this.projekteService=projekteService;
+        this.personenMitProjektenService=personenMitProjektenService;
+        this.personEventService=personEventService;
+    }
 
-	@GetMapping("/")
+    @GetMapping("/")
 	public String mainpage(Model model) {
 	    projekteService.updateProjekte();
 	    List<PersonMitProjekten> personsMitProjekten = personenMitProjektenService.returnPersonenMitProjekten();
@@ -80,9 +88,12 @@ public class PersonController {
         if (!person.isPresent()) {
             throw new PersonNichtVorhanden();
         }
-        List<Projekt> projekte = projektRepository.findAll();
-        model.addAttribute("projekte", projekte);
-        model.addAttribute("person", person);
+        else {
+            List<Projekt> projekte = projektRepository.findAll();
+            model.addAttribute("projekte", projekte);
+            model.addAttribute("person", person);
+        }
+
         return "edit";
 	}
 

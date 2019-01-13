@@ -14,4 +14,10 @@ public class PersonEvent {
     private Long id;
     private Long personId;
     private String event;
+
+    public PersonEvent(String event, Long personId) {
+        this.event=event;
+        this.personId=personId;
+
+    }
 }

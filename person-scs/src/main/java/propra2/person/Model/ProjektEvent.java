@@ -14,4 +14,11 @@ public class ProjektEvent {
     private Long id;
     private Long projektId;
     private String event;
+    public ProjektEvent(){
+
+    }
+    public ProjektEvent(String event, long id) {
+        this.event=event;
+        this.id=id;
+    }
 }
