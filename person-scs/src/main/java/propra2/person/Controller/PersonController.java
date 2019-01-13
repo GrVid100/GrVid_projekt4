@@ -31,8 +31,16 @@ public class PersonController {
     PersonenMitProjektenService personenMitProjektenService;
     @Autowired
     PersonEventService personEventService;
+    public PersonController(ProjektRepository projektRepository, PersonRepository personRepository, EventRepository eventRepository,ProjekteService projekteService,PersonenMitProjektenService personenMitProjektenService,PersonEventService personEventService) {
+        this.projektRepository=projektRepository;
+        this.personRepository=personRepository;
+        this.eventRepository=eventRepository;
+        this.projekteService=projekteService;
+        this.personenMitProjektenService=personenMitProjektenService;
+        this.personEventService=personEventService;
+    }
 
-	@GetMapping("/")
+    @GetMapping("/")
 	public String mainpage(Model model) {
 	    projekteService.updateProjekte();
 	    List<PersonMitProjekten> personsMitProjekten = personenMitProjektenService.returnPersonenMitProjekten();
@@ -51,19 +59,11 @@ public class PersonController {
     public String addToDatabase(@RequestParam("vorname") String vorname,
                                 @RequestParam("nachname") String nachname,
                                 @RequestParam("jahreslohn") String jahreslohn,
-                                @RequestParam("kontaktdaten") String kontaktdaten,
+                                @RequestParam("kontakt") String kontaktdaten,
                                 @RequestParam("skills") String[] skills,
                                 @RequestParam("vergangeneProjekte") Long[] vergangeneProjekte,
                                 Model model) {
-        Person newPerson = new Person();
-        newPerson.setVorname(vorname);
-        newPerson.setNachname(nachname);
-        newPerson.setJahreslohn(jahreslohn);
-        newPerson.setKontakt(kontaktdaten);
-        if (skills != null) {
-            newPerson.setSkills(skills);
-        }
-        newPerson.setProjekteId(vergangeneProjekte);
+        Person newPerson = new Person(vorname,nachname,jahreslohn,kontaktdaten,skills,vergangeneProjekte);
         personRepository.save(newPerson);
         model.addAttribute("person", newPerson);
 
@@ -80,9 +80,12 @@ public class PersonController {
         if (!person.isPresent()) {
             throw new PersonNichtVorhanden();
         }
-        List<Projekt> projekte = projektRepository.findAll();
-        model.addAttribute("projekte", projekte);
-        model.addAttribute("person", person);
+        else {
+            List<Projekt> projekte = projektRepository.findAll();
+            model.addAttribute("projekte", projekte);
+            model.addAttribute("person", person);
+        }
+
         return "edit";
 	}
 
@@ -90,7 +93,7 @@ public class PersonController {
     public String saveChanges(@RequestParam("vorname") String vorname,
                               @RequestParam("nachname") String nachname,
                               @RequestParam("jahreslohn") String jahreslohn,
-                              @RequestParam("kontakt") String kontakt,
+                              @RequestParam("kontaktdaten") String kontakt,
                               @RequestParam("skills") String[] skills,
                               @RequestParam("vergangeneProjekte") Long[] vergangeneProjekte,
                               @PathVariable Long id,
@@ -106,7 +109,6 @@ public class PersonController {
         person.get().setProjekteId(vergangeneProjekte);
         personRepository.save(person.get());
         personEventService.editEvent(id);
-
         List<Projekt> projekts = projekteService.getProjekte(vergangeneProjekte);
 
         model.addAttribute("projekte", projekts);

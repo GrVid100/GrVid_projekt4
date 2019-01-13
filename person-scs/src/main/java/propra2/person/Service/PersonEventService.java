@@ -12,16 +12,12 @@ public class PersonEventService {
     EventRepository eventRepository;
 
     public void createEvent(Person newPerson) {
-        PersonEvent newPersonEvent = new PersonEvent();
-        newPersonEvent.setEvent("create");
-        newPersonEvent.setPersonId(newPerson.getId());
+        PersonEvent newPersonEvent = new PersonEvent("create",newPerson.getId());
         eventRepository.save(newPersonEvent);
     }
 
     public void editEvent(Long id) {
-        PersonEvent newPersonEvent = new PersonEvent();
-        newPersonEvent.setEvent("edit");
-        newPersonEvent.setPersonId(id);
+        PersonEvent newPersonEvent = new PersonEvent("edit",id);
         eventRepository.save(newPersonEvent);
     }
 }

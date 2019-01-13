@@ -19,11 +19,15 @@ public class PersonRestController {
     @Autowired
     EventRepository eventRepository;
 
+    public PersonRestController(PersonRepository personRepository, EventRepository eventRepository) {
+        this.personRepository=personRepository;
+        this.eventRepository=eventRepository;
+    }
+
     @GetMapping("/{id}")
     public PersonApi getById(@PathVariable Long id){
         Optional<Person> person = personRepository.findById(id);
-        PersonApi personApi = new PersonApi(person.get());
-        return personApi;
+        return new PersonApi(person.get());
     }
 
     @PostMapping("/events")

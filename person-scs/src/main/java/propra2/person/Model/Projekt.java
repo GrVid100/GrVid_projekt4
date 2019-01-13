@@ -18,4 +18,11 @@ public class Projekt {
     private String startdatum;
     private String laufzeit;
     private Long[] team;
+
+    public Projekt(String titel, String beschreibung, String startdatum, String laufzeit) {
+        this.titel=titel;
+        this.beschreibung=beschreibung;
+        this.startdatum=startdatum;
+        this.laufzeit=laufzeit;
+    }
 }
