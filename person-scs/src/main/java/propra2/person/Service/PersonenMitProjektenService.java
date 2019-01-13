@@ -27,8 +27,10 @@ public class PersonenMitProjektenService {
             Person person = persons.get(i);
             personMitProjekten.setPerson(person);
             List<Projekt> projekte = new ArrayList<>();
-            for (int j = 0; j < person.getProjekteId().length; j++) {
-                projekte.add(projektRepository.findAllById(person.getProjekteId()[j]));
+            if(person.getProjekteId() != null) {
+                for (int j = 0; j < person.getProjekteId().length; j++) {
+                    projekte.add(projektRepository.findAllById(person.getProjekteId()[j]));
+                }
             }
             personMitProjekten.setProjekte(projekte);
             personsMitProjekten.add(personMitProjekten);

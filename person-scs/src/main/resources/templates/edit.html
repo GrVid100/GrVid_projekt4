@@ -6,30 +6,58 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
 </head>
 <body>
+<p class="navbar" style="background-color: deepskyblue;">
+    <a href="/person" class="navbar-brand" style="color: white">
+        <strong>Übersicht aller Personen</strong>
+    </a>
+</p>
 <form th:action="@{'/person/saveChanges/' + ${person.get().id}}" method="get">
     <div class="col-md-3 mb-3">
-        Vorname:      <input type="text" name="vorname" th:value="${person.get().vorname}"><br>
-        Nachname:     <input type="text" name="nachname" th:value="${person.get().nachname}"><br>
-        Jahreslohn:   <input type="number" name="jahreslohn" th:value="${person.get().jahreslohn}"><br>
-        Kontaktdaten: <input type="email" name="kontakt" th:value="${person.get().kontakt}"><br>
-        Skills: <br>
-        <select name="skills" multiple>
-            <option value="PHP">PHP</option>
-            <option value="Python">Python</option>
-            <option value="Java">Java</option>
-            <option value="Javascript">Javascript</option>
-            <option value="C">C</option>
-            <option value="C++">C++</option>
-            <option value="HTML">HTML</option>
-        </select><br>
-        Vergangene Projekte:<br>
-        <select name="vergangeneProjekte" multiple>
-            <option th:each="projekt : ${projekte}" th:text="${projekt.titel}" th:value="${projekt.id}">Projekte</option>
-        </select>
+        <div class="form-group">
+            <label>Vorname:</label>
+            <input type="text" name="vorname" class="form-control" placeholder="Vornahme" th:value="${person.get().vorname}">
+            <br>
+            <label>Nachname:</label>
+            <input type="text" name="nachname" class="form-control" placeholder="Nachnahme" th:value="${person.get().nachname}">
+            <br>
+            <label>Jahres Lohn:</label>
+            <input type="number" name="jahreslohn" class="form-control" placeholder="Jahres Lohn" th:value="${person.get().jahreslohn}">
+            <br>
+            <label>Kontaktdaten:</label>
+            <input type="email" name="kontakt" class="form-control" aria-describedby="emailHelp" placeholder="Enter email" th:value="${person.get().kontakt}"><br>
+            <label>Skills:</label><br>
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" name="skills" value="PHP">
+                <label class="form-check-label">PHP</label>
+                <br>
+                <input type="checkbox" class="form-check-input" name="skills" value="Python">
+                <label class="form-check-label">Python</label>
+                <br>
+                <input type="checkbox" class="form-check-input" name="skills" value="Java">
+                <label class="form-check-label">Java</label>
+                <br>
+                <input type="checkbox" class="form-check-input" name="skills" value="Javascript">
+                <label class="form-check-label">Javascript</label>
+                <br>
+                <input type="checkbox" class="form-check-input" name="skills" value="C">
+                <label class="form-check-label">C</label>
+                <br>
+                <input type="checkbox" class="form-check-input" name="skills" value="C++">
+                <label class="form-check-label">C++</label>
+                <br>
+                <input type="checkbox" class="form-check-input" name="skills" value="HTML">
+                <label class="form-check-label">HTML</label>
+            </div>
+            <label>Vergangene Projekte: </label><br>
+            <div class="form-check" th:each="projekt : ${projekte}">
+                <input type="checkbox" class="form-check-input" name="vergangeneProjekte" th:text="${projekt.titel}" th:value="${projekt.id}">Projekte</input>
+                <br>
+            </div>
+            <button class="btn btn-primary my-2" type="submit">Submit</button>
+        </div>
     </div>
-    <button class="btn btn-primary my-2" type="submit">Submit</button>
 </form>
-<div class="col-md-3 mb-3">
+<div class="alert alert-secondary">
     <p>© Made by Happy-Gruppe</p>
 </div>
 </body>

@@ -52,25 +52,25 @@ public class PersonController {
                                 @RequestParam("nachname") String nachname,
                                 @RequestParam("jahreslohn") String jahreslohn,
                                 @RequestParam("kontaktdaten") String kontaktdaten,
-                                @RequestParam("skills") String[] skills,
-                                @RequestParam("vergangeneProjekte") Long[] vergangeneProjekte,
+                                @RequestParam(value = "skills", defaultValue = "keine", required = false) String[] skills,
+                                @RequestParam(value = "vergangeneProjekte", required = false) Long[] vergangeneProjekte,
                                 Model model) {
         Person newPerson = new Person();
+        List<Projekt> projekte = new ArrayList<>();
         newPerson.setVorname(vorname);
         newPerson.setNachname(nachname);
         newPerson.setJahreslohn(jahreslohn);
         newPerson.setKontakt(kontaktdaten);
-        if (skills != null) {
-            newPerson.setSkills(skills);
+        newPerson.setSkills(skills);
+        if(vergangeneProjekte != null) {
+            newPerson.setProjekteId(vergangeneProjekte);
+            projekte = projekteService.getProjekte(vergangeneProjekte);
         }
-        newPerson.setProjekteId(vergangeneProjekte);
         personRepository.save(newPerson);
         model.addAttribute("person", newPerson);
-
-        List<Projekt> projekte = projekteService.getProjekte(vergangeneProjekte);
-        model.addAttribute("projekte", projekte);
         personEventService.createEvent(newPerson);
 
+        model.addAttribute("projekte", projekte);
 	    return "confirmationAdd";
     }
 
@@ -91,24 +91,23 @@ public class PersonController {
                               @RequestParam("nachname") String nachname,
                               @RequestParam("jahreslohn") String jahreslohn,
                               @RequestParam("kontakt") String kontakt,
-                              @RequestParam("skills") String[] skills,
-                              @RequestParam("vergangeneProjekte") Long[] vergangeneProjekte,
+                              @RequestParam(value = "skills", defaultValue = "keine", required = false) String[] skills,
+                              @RequestParam(value = "vergangeneProjekte", required = false) Long[] vergangeneProjekte,
                               @PathVariable Long id,
                               Model model) {
         Optional<Person> person = personRepository.findById(id);
+        List<Projekt> projekts = new ArrayList<>();
         person.get().setVorname(vorname);
         person.get().setNachname(nachname);
         person.get().setJahreslohn(jahreslohn);
         person.get().setKontakt(kontakt);
-        if (skills != null) {
-            person.get().setSkills(skills);
+        person.get().setSkills(skills);
+        if(vergangeneProjekte != null) {
+            person.get().setProjekteId(vergangeneProjekte);
+            projekts = projekteService.getProjekte(vergangeneProjekte);
         }
-        person.get().setProjekteId(vergangeneProjekte);
         personRepository.save(person.get());
         personEventService.editEvent(id);
-
-        List<Projekt> projekts = projekteService.getProjekte(vergangeneProjekte);
-
         model.addAttribute("projekte", projekts);
         model.addAttribute("person", person);
 

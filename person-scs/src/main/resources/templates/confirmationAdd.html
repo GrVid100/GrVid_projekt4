@@ -7,30 +7,31 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
 </head>
 <body>
-<p class="navbar navbar-dark bg-primary">
-    <a href="/person" class="navbar-brand d-flex align-items-center">
+<p class="navbar" style="background-color: deepskyblue;">
+    <a href="/person" class="navbar-brand" style="color: white">
         <strong>Übersicht aller Personen</strong>
     </a>
 </p>
-<br>
-<h3 th:text="${person.vorname} + ' ' + ${person.nachname}"><b>Name</b></h3>
-<ul class="list-group">
-    <li class="list-group-item" th:text="'Jahres Lohn: ' + ${person.jahreslohn}" >Jahres Lohn</li>
-    <li class="list-group-item" th:text="'Kontakt Daten: ' + ${person.kontakt}" >Kontakt Daten</li>
-    <li class="list-group-item"><b>Skills: </b>
-        <ul>
-            <li th:if="${person.skills != null}" th:each="skill : ${person.skills}" th:text="${skill}">Skills</li>
-        </ul>
-    </li>
-    <li class="list-group-item"><b>Vergangene Projekte: </b>
-        <ul>
-            <li th:each="projekt : ${projekte}" th:text="${projekt.titel} + ', ' + ${projekt.laufzeit}">
-                <a style="font-color: black; display: block" th:href="@{'/person/projectDescription' + ${projekt.id}}"><p>Projektbeschreibung</p></a>
-            </li>
-        </ul>
-    </li>
-</ul>
 <div class="col-md-3 mb-3">
+    <h3 th:text="${person.vorname} + ' ' + ${person.nachname}"><b>Name</b></h3>
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item" th:text="'Jahres Lohn: ' + ${person.jahreslohn}" >Jahres Lohn</li>
+        <li class="list-group-item" th:text="'Kontakt Daten: ' + ${person.kontakt}" >Kontakt Daten</li>
+        <li class="list-group-item"><b>Skills: </b>
+            <ul class="list-inline">
+                <li class="badge badge-secondary" style="background-color: orange" th:each="skill : ${person.skills}" th:text="${skill}">Skills</li>
+            </ul>
+        </li>
+        <li class="list-group-item"><b>Vergangene Projekte: </b>
+            <ul th:if="${projekte != null} ">
+                <li th:each="projekt : ${projekte}" th:text="${projekt.titel} + ', ' + ${projekt.laufzeit}">
+                    <a style="font-color: black; display: block" th:href="@{'/person/projectDescription' + ${projekt.id}}"><p>Projektbeschreibung</p></a>
+                </li>
+            </ul>
+        </li>
+    </ul>
+</div>
+<div class="alert alert-secondary">
     <p>© Made by Happy-Gruppe</p>
 </div>
 </body>
