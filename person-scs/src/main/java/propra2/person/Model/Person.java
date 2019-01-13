@@ -19,7 +19,7 @@ public class Person {
     private String kontakt;
     private String[] skills;
     private Long[] projekteId;
-
+    public Person(){}
     public Person(String vorname, String nachname, String jahreslohn, String kontaktdaten, String[] skills, Long[] vergangeneProjekte) {
 
         this.vorname=vorname;
